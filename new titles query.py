@@ -23,18 +23,10 @@ def new_books():
     
 
 def main():
-    book_list = new_books()
-	
-    for record in book_list["entries"]:
-        print("RECORD: b" + record["id"] + "a \n")
-        print("TITLE: " + record["title"] + "\n")
-        print("AUTHOR: " + record["author"] + "\n")
-        print("MATTYPE: " + record["materialType"]['value'] + "\n")
-
-my_list = new_books() 
-with io.open('new_books.html','w', encoding="utf-8") as f:
-    f.write(json2html.convert(json = my_list))
-f.close()           
-##print(json2html.convert(json = my_list))          
-##main()
+    my_list = new_books() 
+    with io.open('new_books.html','w', encoding="utf-8") as f:
+        f.write(json2html.convert(json = my_list))
+    f.close()
+       
+main()
 
