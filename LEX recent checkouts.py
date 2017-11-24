@@ -23,7 +23,12 @@ def new_checkouts():
     
 
 def main():
-    my_list = new_checkouts() 
+    my_list = new_checkouts()
+    for entry in my_list["entries"]:
+        try:
+            print("b"+ entry["bibIds"][0] + "a")
+        except KeyError:
+	        continue   
     with io.open('new_checkouts.html','w', encoding="utf-8") as f:
         f.write(json2html.convert(json = my_list))
     f.close() 
