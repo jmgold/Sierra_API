@@ -18,21 +18,32 @@ def new_checkouts():
     token = get_token()
     header = {"Authorization": "Bearer " + token, "Content-Type": "application/json;charset=UTF-8"}
     request = requests.get("https://library.minlib.net:443/iii/sierra-api/v4/items/?limit=500&fields=bibIds%2Cstatus%2CcallNumber%2CupdatedDate&updatedDate=%5B{}T00%3A00%3A01Z%2C%5D&deleted=false&duedate=%5B{}T00%3A00%3A01Z%2C%5D&suppressed=false&locations=lex*".format(date.today() - timedelta(days=1),date.today() + timedelta(days=7)), headers = header)
-    json_response = json.loads(request.text)
+    json_response = json.loads(request.text) 
     return json_response
     
-
+def get_title(title_list):
+    token = get_token()
+    header = {"Authorization": "Bearer " + token, "Content-Type": "application/json;charset=UTF-8"}
+    id_string =""
+    for entry in title_list["entries"]:
+        try:
+            id_string +=("%2C" + entry["bibIds"][0])
+        except KeyError:
+            continue
+    id_string = id_string[3:]
+    request = requests.get("https://library.minlib.net:443/iii/sierra-api/v4/bibs/?id={}&fields=title".format(id_string), headers = header)
+    json_response = json.loads(request.text)
+    return json_response
+        
 def main():
     my_list = new_checkouts()
-    for entry in my_list["entries"]:
-        try:
-            print("b"+ entry["bibIds"][0] + "a")
-        except KeyError:
-	        continue   
+    titles = get_title(my_list)
+##Merge currently broken    
+    merged_list = {'titles' : my_list, 'my_list' : titles}
+    json.dumps(merged_list)
+    print(merged_list)
     with io.open('new_checkouts.html','w', encoding="utf-8") as f:
-        f.write(json2html.convert(json = my_list))
-    f.close() 
-
-                  
+        f.write(json2html.convert(json = merged_list))
+    f.close()
+                    
 main()
-
