@@ -7,8 +7,8 @@ from datetime import date, timedelta
 
 
 def get_token():
-    url = "https://library.minlib.net/iii/sierra-api/v4/token"
-    header = {"Authorization": "Basic T2tPZm1XT005UkloVXpMeWc5QkN6YUppVUdJTTpSdWZ1c2QwZw==", "Content-Type": "application/x-www-form-urlencoded"}
+    url = ##"[server]"
+    header = ##{"Authorization": [key], "Content-Type": "application/x-www-form-urlencoded"}
     response = requests.post(url, headers=header)
     json_response = json.loads(response.text)
     token = json_response["access_token"]
@@ -17,7 +17,7 @@ def get_token():
 def new_books():    
     token = get_token()
     header = {"Authorization": "Bearer " + token, "Content-Type": "application/json;charset=UTF-8"}
-    request = requests.get("https://library.minlib.net:443/iii/sierra-api/v4/bibs/?fields=id%2Ctitle%2Cauthor%2CmaterialType&createdDate=%5B{}T00%3A00%3A01Z%2C%5D&deleted=false&suppressed=false".format(date.today() - timedelta(days=3)), headers = header)
+    request = requests.get("[server]/?fields=id%2Ctitle%2Cauthor%2CmaterialType&createdDate=%5B{}T00%3A00%3A01Z%2C%5D&deleted=false&suppressed=false".format(date.today() - timedelta(days=3)), headers = header)
 ##    json_response = json.loads(request.content.decode('utf-8'))
     json_response = json.loads(request.text)
     return json_response
