@@ -26,17 +26,17 @@ def new_books():
 def main():
     my_list = new_books()
 ## delete matType code    
-    for entry in my_list["entries"]:
-        del entry["materialType"]["code"]
+    for record in my_list["entries"]:
+        del record["materialType"]["code"]
 ## test response
 ##    for k, v in my_list.items():
 ##        print('{0}:{1}'.format(k, v))
-##change record number to Encore link
+##change title to Encore link
     for record in my_list["entries"]:
-        record["id"] = "<a href=\"http://find.minlib.net/iii/encore/record/C__Rb" + record["id"] + " \">" + record["id"] + "</a>"
+        record["title"] = "<a href=\"http://find.minlib.net/iii/encore/record/C__Rb" + record["id"] + " \">" + record["title"] + "</a>"
+        del record["id"]
     with io.open('new_books.html','w', encoding="utf-8") as f:
         f.write(json2html.convert(json = my_list))
     f.close() 
-
                   
 main()
