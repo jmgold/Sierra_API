@@ -14,15 +14,17 @@ def get_token():
     token = json_response["access_token"]
     return token
 
+#Retrieves items that were checked out in Lexington within the past 3 days
 def new_checkouts():    
     token = get_token()
     url = "https://library.minlib.net/iii/sierra-api/v4/items/query?offset=0&limit=500"
     header = {"Authorization": "Bearer " + token, "Content-Type": "application/json;charset=UTF-8"}
-    query = {"queries": [{"target": {"record": {"type": "item"},"id": 63},"expr": {"op": "equals","operands": ["12-15-2017",""]}},"and",{"target": {"record": {"type": "item"},"id": 87},"expr": {"op": "between","operands": ["178","188"]}},"or",{"target": {"record": {"type": "item"},"id": 87},"expr": {"op": "between","operands": ["645","653"]}}]}
+    query = {"queries": [{"target": {"record": {"type": "item"},"id": 63},"expr": {"op": "equals","operands": ["{}".format(date.today() - timedelta(days=3), '%m-%d-%y'),""]}},"and",{"target": {"record": {"type": "item"},"id": 87},"expr": {"op": "between","operands": ["178","188"]}},"or",{"target": {"record": {"type": "item"},"id": 87},"expr": {"op": "between","operands": ["645","653"]}}]}
     request = requests.post(url, data=json.dumps(query), headers = header)
     convert_request = json.loads(request.text)
     return convert_request
-    
+
+#Takes response to itemAPI and related bibIDs    
 def get_bibIds(item_list):
     token = get_token()
     id_string = ""
@@ -33,10 +35,11 @@ def get_bibIds(item_list):
         except KeyError:
             continue
     id_string = id_string[3:]
-    request = requests.get("https://library.minlib.net:443/iii/sierra-api/v4/items/?id={}&fields=bibIds".format(id_string), headers = header)
+    request = requests.get("https://library.minlib.net:443/iii/sierra-api/v4/items/?limit=500&offset=0&id={}&fields=bibIds".format(id_string), headers = header)
     convert_request = json.loads(request.text)
     return convert_request
-		
+
+#Takes bibIDs and returns title and author fields		
 def get_title(bibs):
     token = get_token()
     header = {"Authorization": "Bearer " + token, "Content-Type": "application/json;charset=UTF-8"}
@@ -50,7 +53,8 @@ def get_title(bibs):
     request = requests.get("https://library.minlib.net:443/iii/sierra-api/v4/bibs/?limit=500&offset=0&id={}&fields=title%2Cauthor".format(id_string), headers = header)
     convert_request = json.loads(request.text)
     return convert_request
-    
+
+#Makes title field into a hyperlink to Encore and then removed bibID field    
 def encore_link(titles):
     for record in titles["entries"]:
         record["title"] = "<a href=\"http://find.minlib.net/iii/encore/record/C__Rb" + record["id"] + " \">" + record["title"] + "</a>"
