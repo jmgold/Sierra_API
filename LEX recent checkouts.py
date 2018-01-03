@@ -61,14 +61,18 @@ def encore_link(titles):
         del record["id"]
     return titles
     
+#Generates HTML table from JSON response
+def html_table(table):
+    with io.open('lex_new_checkouts.html','w', encoding="utf-8") as f:
+      f.write(json2html.convert(json = table))
+    f.close()
+    
 def main():
     my_list = new_checkouts()
     bibs = get_bibIds(my_list)
     titles = get_title(bibs)
     titles = encore_link(titles)
-    with io.open('lex_new_checkouts.html','w', encoding="utf-8") as f:
-      f.write(json2html.convert(json = titles))
-    f.close()
+    html_table(titles)
                     
 main()
 
